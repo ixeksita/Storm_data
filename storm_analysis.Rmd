@@ -1,0 +1,88 @@
+---
+title: "Tornado's impact on USA public health and economy."
+author: "Tania Sanchez"
+date: "3/8/2017"
+output: html_document
+---
+
+# Content 
+1. Summary 
+2. Data processing 
+3. Results
+4. Conclusions and discussion
+
+# 1. Summary 
+
+# 2. Data Processing 
+This section contains details of the data pre-processing used in this study. 
+
+## 2.1 Settings (inc. libraries used)
+
+The following libraries were used for data manipulation as well as for visualization purposes:
+```{r echo=FALSE}
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(RColorBrewer)
+library(grid)
+library(scales)
+library(R.utils)
+#library(data.table)
+# library(ggmaps)
+```
+## 2. Acquiring the data
+
+The data used in this study can be acquired from the original source (the National Climatic Data Center, National Oceanic and Atmposperic Administration). The file is thenunzipped and read.
+
+
+```{r}
+# Check for existence of the data
+if(!file.exists("StormData.csv")) {
+
+# If needed the data is donwloaded from source
+download.file(url="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2", destfile="StormData.csv.bz2")
+  
+# Unzipping the data 
+bunzip2(filename="StormData.csv.bz2", destname="StormData.csv", remove=TRUE)
+}
+
+# Reading the data set
+raw_data <- read.csv("StormData.csv")
+
+# Checking the variables of the data set
+names(raw_data)
+```
+
+The relevant variables for this study are:
+
+* `EVTYPE`: Type of the event 
+
+- `BGN_DATE`: Start date and time of the storm
+
+- `END_DATE`: End date and time of the storm
+
+- `STATE`: Location of the storm event
+
+- `INJURIES`: Number of injuried per storm
+
+- `FATALITIES`: Number of fatalities per 
+
+- `PROPDMG`: Property damage per storm 
+
+- `PROPDMGEXP`: Character indicating the unit size of PROPDMG
+
+- `CROPDMG`: Crop damage per storm
+
+- `CROPDMGEXP`: Character indicating the unit size of CROPDMG
+
+Hence, only the relevant variables are maintained and kept in a variable named `data`.
+```{r}
+data <- raw_data %>%  select(EVTYPE, BGN_DATE, END_DATE, STATE, FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP)
+```
+
+
+
+
+
+
+
