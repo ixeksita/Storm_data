@@ -1,25 +1,28 @@
 ---
-title: "Tornado's impact on USA public health and economy."
-author: "Tania Sanchez"
-date: "3/8/2017"
-output: html_document
+title: "Storm analysis"
+author: "Tania S.M"
+output:
+  html_document:
+    toc: true
+    theme: yeti
+    number_sections: true
+    highlight: pygments
 ---
 
-# Content 
-1. Summary 
-2. Data processing 
-3. Results
-4. Conclusions and discussion
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width=10, fig.height=8, fig.path='figures/', dev=c('png'),
+                       warning=FALSE, message=FALSE, echo=TRUE)
+```
 
-# 1. Summary 
+#  Summary 
 
-# 2. Data Processing 
+#  Data Processing 
 This section contains details of the data pre-processing used in this study. 
 
-## 2.1 Settings (inc. libraries used)
+##  Settings (inc. libraries used)
 
 The following libraries were used for data manipulation as well as for visualization purposes:
-```{r echo=FALSE}
+```{r include =FALSE}
 library(dplyr)
 library(lubridate)
 library(ggplot2)
@@ -30,7 +33,7 @@ library(R.utils)
 #library(data.table)
 # library(ggmaps)
 ```
-## 2. Acquiring the data
+##  Acquiring the data
 
 The data used in this study can be acquired from the original source (the National Climatic Data Center, National Oceanic and Atmposperic Administration). The file is thenunzipped and read.
 
@@ -43,15 +46,19 @@ if(!file.exists("StormData.csv")) {
 download.file(url="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2", destfile="StormData.csv.bz2")
   
 # Unzipping the data 
-bunzip2(filename="StormData.csv.bz2", destname="StormData.csv", remove=TRUE)
+bunzip2(filename="StormData.csv.bz2", destname = "StormData.csv", remove =  TRUE)
 }
 
 # Reading the data set
 raw_data <- read.csv("StormData.csv")
-
+```
+## Data pre-processing
+First we will have a look at the variables included in the data set:
+```{r}
 # Checking the variables of the data set
 names(raw_data)
 ```
+
 
 The relevant variables for this study are:
 
@@ -75,14 +82,18 @@ The relevant variables for this study are:
 
 - `CROPDMGEXP`: Character indicating the unit size of CROPDMG
 
-Hence, only the relevant variables are maintained and kept in a variable named `data`.
+Hence, only the relevant variables are maintained and kept in a variable named `storm_data`.
 ```{r}
-data <- raw_data %>%  select(EVTYPE, BGN_DATE, END_DATE, STATE, FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP)
+storm_data <- raw_data %>%  select(EVTYPE, BGN_DATE, END_DATE, STATE, FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP)
 ```
 
+Having a look at the data set:
+```{r}
+head(data)
+```
+As the magnitude for damages amount contains invalid characters and is not practical in this format for the rest of the analysis, we clean the data and convert it to a numeric value we can multiply with the damage amount to get the final damage value in USD. We consider the invalid characters to be missing data having no value.
 
-
-
+The valid values are K for thousands, M for millions and B for billions (as specified in the National Weather Service Storm Data Documentation)
 
 
 
