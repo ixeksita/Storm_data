@@ -89,11 +89,29 @@ storm_data <- raw_data %>%  select(EVTYPE, BGN_DATE, END_DATE, STATE, FATALITIES
 
 Having a look at the data set:
 ```{r}
-head(data)
+head(storm_data)
 ```
-As the magnitude for damages amount contains invalid characters and is not practical in this format for the rest of the analysis, we clean the data and convert it to a numeric value we can multiply with the damage amount to get the final damage value in USD. We consider the invalid characters to be missing data having no value.
+In the data set, the damage to property and crops are contained in two separate variables: `PROPDMG`,`CROPDMG` and `PROPDMGEXP` `CROPDMGEXP`, which correspondto the base value and the multiplying factor of the value, respectively.
 
-The valid values are K for thousands, M for millions and B for billions (as specified in the National Weather Service Storm Data Documentation)
+The valid values are K for thousands, M for millions and B for billions (as specified in the National Weather Service Storm Data Documentation). If there is no associated character, then the value is '0'.
+
+```{r}
+storm_data <- storm_data %>%
+  # creating a new column that contains the property damage in dollars
+ mutate(DMGproperty = ifelse(grepl("k", PROPDMGEXP, ignore.case=TRUE, perl=TRUE), PROPDMG*1000,
+         ifelse(grepl("m", PROPDMGEXP, ignore.case=TRUE, perl=TRUE),PROPDMG*1000000,
+         ifelse(grepl("", PROPDMGEXP, ignore.case=TRUE, perl=TRUE),0,NA))),
+
+## creating new column DMGcrops for crop damage in dollars
+
+         DMGcrops = ifelse(grepl("k", CROPDMGEXP, ignore.case=TRUE, perl=TRUE), CROPDMG*1000,
+         ifelse(grepl("m", CROPDMGEXP, ignore.case=TRUE, perl=TRUE),CROPDMG*1000000,
+         ifelse(grepl("", PROPDMGEXP, ignore.case=TRUE, perl=TRUE),0,NA))),
+
+## creating new column DMGtotal which the total damage in dollars
+
+         DMGtotal=DMGproperty+DMGcrops)
+```
 
 
 
